@@ -49,11 +49,7 @@ public abstract class Contract {
         this.vehicleSold = vehicleSold;
     }
 
-    public abstract BigDecimal getTotalPrice() {
-        return null;
-    }
+    public abstract BigDecimal getTotalPrice();
 
-    public abstract BigDecimal getMonthlyPayment() {
-        return null;
-    }
+    public abstract BigDecimal getMonthlyPayment();
 }
