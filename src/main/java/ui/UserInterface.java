@@ -1,4 +1,8 @@
-package com.pluralsight.dealershipmanager;
+package ui;
+
+import data.DealershipFileManager;
+import model.Dealership;
+import model.Vehicle;
 
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
