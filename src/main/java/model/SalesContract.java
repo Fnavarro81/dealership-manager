@@ -4,14 +4,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class SalesContract extends Contract{
+    private final BigDecimal PRICE_THRESHOLD = new BigDecimal("10000");
     private BigDecimal salesTaxAmount;
     private BigDecimal recordingFee;
     private boolean isFinanced;
 
-    public SalesContract(LocalDate contractDate, String customerName, String customerEmail, Vehicle vehicleSold, BigDecimal salesTaxAmount, BigDecimal recordingFee, boolean isFinanced) {
+    public SalesContract(LocalDate contractDate, String customerName, String customerEmail, Vehicle vehicleSold, boolean isFinanced) {
         super(contractDate, customerName, customerEmail, vehicleSold);
-        this.salesTaxAmount = salesTaxAmount;
-        this.recordingFee = recordingFee;
+        this.salesTaxAmount = getVehicleSold().getPrice().multiply(new BigDecimal(".05"));
+        this.recordingFee = new BigDecimal("100");
         this.isFinanced = isFinanced;
     }
 
@@ -41,15 +42,28 @@ public class SalesContract extends Contract{
 
     @Override
     public BigDecimal getTotalPrice() {
-        return null;
+        return getVehicleSold().getPrice().add(getSalesTaxAmount()).add(getRecordingFee()).add(getProcessingFee());
     }
 
     @Override
     public BigDecimal getMonthlyPayment() {
-        return null;
+        if (!isFinanced) {
+            return BigDecimal.ZERO;
+        } else {
+            boolean isAbovepriceThreshold = getVehicleSold().getPrice().compareTo(PRICE_THRESHOLD) >= 0;
+            if (isAbovepriceThreshold) {
+                return LoanCalculator.calculateMonthlyPayment(getVehicleSold().getPrice(), new BigDecimal(".0425"), 48);
+            } else {
+                return LoanCalculator.calculateMonthlyPayment(getVehicleSold().getPrice(), new BigDecimal(".0525"), 24);
+            }
+        }
     }
 
     public BigDecimal getProcessingFee() {
-        return null;
+        if (getVehicleSold().getPrice().compareTo(PRICE_THRESHOLD) < 0) {
+            return new BigDecimal("295");
+        } else {
+            return new BigDecimal("495");
+        }
     }
 }
